@@ -28,6 +28,10 @@ class UserController extends Controller
 
     function login(LoginRequest $request){
 
-        return $this->userService->login($request->all());
+        return $this->userService->login($request->all(["email","password"]));
+    }
+
+    function checkToken(){
+        return $this->userService->checkToken();
     }
 }

@@ -4,11 +4,14 @@ namespace App\Service;
 
 use App\Http\Requests\Request;
 use App\Models\User;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Http;
 
 class UserService 
 {
-    function __construct(protected User $user){}
+    function __construct(protected RoleService $roleService,protected User $user){
+
+    }
 
     function get(){
         return $this->user->all();
@@ -29,13 +32,24 @@ class UserService
         return response(['user' => $user, 'token' => $token]);
     }
 
-    function register(array $data){
-        $data['password'] = bcrypt($data['password']);
+    function checkToken(){
+        $user =  auth()->user();
+        if (!$user) {
+            return response(['error' => 'Token not valid']);
+        }
+        return $user;
+    }
 
-        $user = $this->user->create($data);
+    function register(array $data){
+        $password = $data['password'];
+        $data['password'] = bcrypt($password);
+
+        $user = $this->user->make($data);
+        $user->role()->associate($this->roleService->getUserRole());
+        $user->save();
 
         // $token = $user->createToken('api')->accessToken;
-        $token = $this->authToken($data['email'],$data['password']);
+        $token = $this->authToken($data['email'],$password);
 
         return response([ 'user' => $user, 'token' => $token]);
     }
@@ -58,7 +72,11 @@ class UserService
         ]);
         
         $result = app()->handle($request);
-        return json_decode($result->getContent(), true); 
+        $data = json_decode($result->getContent(), true); 
+        if(isset($data['error'])){
+            throw new HttpResponseException( response()->json(["client_error"=>$data['message']]) );
+        }
+        return $data;
     }
 
     function refreshToken(string $refresh_token){
