@@ -48,4 +48,8 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class);
     }
+
+    public function sensors(){
+        return $this->hasMany(UserSensor::class);
+    }
 }
