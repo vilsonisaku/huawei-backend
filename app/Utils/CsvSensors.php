@@ -2,9 +2,9 @@
 
 namespace App\Utils;
 
+use App\Models\DeviceType;
 use App\Models\Role;
-use App\Models\SmartPhoneSensor;
-use App\Models\SmartWatchSensor;
+use App\Models\SensorType;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 
@@ -29,17 +29,17 @@ class CsvSensors
 
 
     function saveSmartPhoneSensors(){
+        $deviceType = DeviceType::find(1);
         $sensors = Storage::get("smartphone.csv");
-        $data = $this->filterSensorTypes($sensors);
-        SmartPhoneSensor::insertOrIgnore( $data->toArray() );
+        $this->saveSensorTypes($deviceType,$sensors);
 
-        $data = $this->saveSensorsValues($sensors);
+        $this->saveSensorsValues($sensors);
     }
 
     function saveSmartWatchSensors(){
+        $deviceType = DeviceType::find(2);
         $sensors = Storage::get("smartwatch.csv");
-        $data = $this->filterSensorTypes($sensors);
-        SmartWatchSensor::insertOrIgnore( $data->toArray() );
+        $this->saveSensorTypes($deviceType,$sensors);
     }
 
 
@@ -69,7 +69,7 @@ class CsvSensors
         $sensors = explode("\n",$sensors);
 
         array_shift($sensors);
-        $types = SmartPhoneSensor::get();
+        $types = SensorType::get();
         return collect($sensors)->map(function($row) use ($types){ 
             $data = $this->filterSensorValues($row);
             $type = $types->where("name",$data["type"])->first();
@@ -80,15 +80,21 @@ class CsvSensors
     /*
     *   filter sensor types to get the unique names
     */
-    function filterSensorTypes(string $sensors){
+    function saveSensorTypes(DeviceType $deviceType,string $sensors){
         $sensors = explode("\n",$sensors);
         array_shift($sensors);
 
         $data = collect($sensors)->map(function($row){ 
             $item = explode(",",$row); 
             return $item[1];
-        })->unique()->values()->map(function($sensor_name){
-            return ["name"=>$sensor_name];
+
+        })->unique()->values()->map(function($sensor_name) use ($deviceType) {
+            $sensorType = $deviceType->sensorType()->where("name",$sensor_name)->first();
+            if($sensorType){
+                $deviceType->sensorType()->attach($sensorType);
+            } else {
+                $deviceType->sensorType()->create(["name"=>$sensor_name]);
+            }
         });
 
         return $data;

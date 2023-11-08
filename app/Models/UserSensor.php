@@ -18,8 +18,7 @@ class UserSensor extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function type(): MorphTo
-    {
-        return $this->morphTo(null,"type_model");
+    public function type(){
+        return $this->belongsTo(SensorType::class,"type_id");
     }
 }

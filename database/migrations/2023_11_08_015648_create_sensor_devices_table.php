@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_sensors', function (Blueprint $table) {
+        Schema::create('sensor_devices', function (Blueprint $table) {
             $table->id();
-            $table->json("value");
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger("type_id");
-
-            $table->timestamps();
+            $table->unsignedBigInteger('sensor_type_id');
+            $table->unsignedBigInteger('device_type_id');
+            $table->unique(['device_type_id','sensor_type_id']);
         });
     }
 
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_sensors');
+        Schema::dropIfExists('sensor_devices');
     }
 };

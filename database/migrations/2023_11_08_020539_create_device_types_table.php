@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('smart_watch_sensors', function (Blueprint $table) {
+        Schema::create('device_types', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
         });
@@ -22,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('smart_watch_sensors');
+        Schema::dropIfExists('device_types');
     }
 };
