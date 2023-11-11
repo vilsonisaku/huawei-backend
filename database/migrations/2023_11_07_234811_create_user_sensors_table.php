@@ -16,6 +16,7 @@ return new class extends Migration
             $table->json("value");
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger("type_id");
+            $table->timestamp("time");
 
             $table->timestamps();
         });

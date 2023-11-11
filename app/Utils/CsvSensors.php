@@ -22,7 +22,6 @@ class CsvSensors
         $this->user = User::first();
 
         $this->saveSmartPhoneSensors();
-        $this->saveSmartWatchSensors();
 
     }
     
@@ -32,6 +31,8 @@ class CsvSensors
         $deviceType = DeviceType::find(1);
         $sensors = Storage::get("smartphone.csv");
         $this->saveSensorTypes($deviceType,$sensors);
+
+        $this->saveSmartWatchSensors();
 
         $this->saveSensorsValues($sensors);
     }
@@ -52,6 +53,7 @@ class CsvSensors
         }
         return [ 
             "type"=>explode(",",$row)[1] , 
+            "time"=>explode(",",$row)[2] , 
             "value"=>explode(", ", 
                 str_replace("'","", 
                     explode("]",
@@ -73,7 +75,7 @@ class CsvSensors
         return collect($sensors)->map(function($row) use ($types){ 
             $data = $this->filterSensorValues($row);
             $type = $types->where("name",$data["type"])->first();
-            $this->user->sensors()->make(["value"=>json_encode($data["value"]) ])->type()->associate($type)->save();
+            $this->user->sensors()->make(["value"=>json_encode($data["value"]), "time"=>$data['time'] ])->type()->associate($type)->save();
         });
     }
 
@@ -89,9 +91,10 @@ class CsvSensors
             return $item[1];
 
         })->unique()->values()->map(function($sensor_name) use ($deviceType) {
-            $sensorType = $deviceType->sensorType()->where("name",$sensor_name)->first();
+            $sensorType = SensorType::where("name",$sensor_name)->first();
             if($sensorType){
-                $deviceType->sensorType()->attach($sensorType);
+                if(!$deviceType->sensorType()->find($sensorType))
+                    $deviceType->sensorType()->attach($sensorType);
             } else {
                 $deviceType->sensorType()->create(["name"=>$sensor_name]);
             }

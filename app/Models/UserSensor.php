@@ -12,6 +12,7 @@ class UserSensor extends Model
 
     protected $fillable = [
         'value',
+        'time'
     ];
 
     public function user(){
