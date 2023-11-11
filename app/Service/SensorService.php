@@ -67,11 +67,15 @@ class SensorService
 
     function getUserHeardRates(User $user){
         $sensor = $this->findSensorTypeByName("heart_rate");
-        return [
+        $data = [
             "max" => $this->userSensorModel($sensor->id,$user->id)->orderBy("value->0","desc")->first(["value","time"]),
             "min" => $this->userSensorModel($sensor->id,$user->id)->orderBy("value->0","asc")->first(["value","time"]),
             "last" => $this->userSensorModel($sensor->id,$user->id)->latest("time")->first(["value","time"])
         ];
+        foreach($data as $key => $item){
+            $data[$key]->value = json_decode($item->value)[0];
+        }
+        return $data;
     }
 
     function getStepsCount($user){
