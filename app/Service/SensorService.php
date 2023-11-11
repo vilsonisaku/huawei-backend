@@ -47,7 +47,7 @@ class SensorService
         return [
             "steps"=>$steps,
             "hard_rate"=> $this->getUserHeardRates($user),
-            "sleeps"=> "7h 32min",
+            "sleep"=> "7h 32min",
             "calories"=> 4300,
         ];
     }
