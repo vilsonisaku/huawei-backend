@@ -21,7 +21,7 @@ class SensorService
     }
 
     function getUserSensors(string $name,$take){
-        $sensor = $this->sensorType->whereName($name)->first();
+        $sensor = $this->sensorType->whereName($name)->firstOrFail();
         return $this->userSensor->where("type_id",$sensor->id)->with("type")->latest('created_at')->paginate($take);
     }
 
