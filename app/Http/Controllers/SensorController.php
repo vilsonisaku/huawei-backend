@@ -16,7 +16,8 @@ class SensorController extends Controller
     }
 
     function getUserSensors($name,GetUserSensorRequest $userSensorRequest){
-        return $this->sensorService->getUserSensors($name,$userSensorRequest->take?:10);
+        $user = auth()->user();
+        return $this->sensorService->getUserSensors($user,$name,$userSensorRequest->take?:10);
     }
 
     function updateUserSensors(){

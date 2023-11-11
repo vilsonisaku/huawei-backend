@@ -20,9 +20,9 @@ class SensorService
         return $this->sensorType->paginate(10);
     }
 
-    function getUserSensors(string $name,$take){
+    function getUserSensors(User $user, string $name,$take){
         $sensor = $this->sensorType->whereName($name)->firstOrFail();
-        return $this->userSensor->where("type_id",$sensor->id)->with("type")->latest('created_at')->paginate($take);
+        return $this->userSensor->where("type_id",$sensor->id)->where("user_id",$user->id)->with("type")->latest('created_at')->paginate($take);
     }
 
     function updateUserSensor(string $name){
