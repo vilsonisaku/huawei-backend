@@ -32,6 +32,8 @@ class CsvSensors
         $sensors = Storage::get("smartphone.csv");
         $this->saveSensorTypes($deviceType,$sensors);
 
+        $sensors = Storage::get("smartwatch.csv");
+
         $this->saveSmartWatchSensors();
 
         $this->saveSensorsValues($sensors);

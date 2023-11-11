@@ -25,4 +25,9 @@ class SensorController extends Controller
         $user = auth()->user();
         return $this->sensorService->updateUserSensors($user,$name,$request->get("data"));
     }
+
+    function getProfile(){
+        $user = auth()->user();
+        return $this->sensorService->getProfileInfo($user);
+    }
 }

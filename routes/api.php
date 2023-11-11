@@ -25,6 +25,7 @@ Route::post('login','UserController@login');
 
 Route::middleware('auth')->group( function () {
     Route::post('check/token','UserController@checkToken');
+    Route::get('profile','SensorController@getProfile');
     Route::get('users','UserController@getAll');
     Route::get('users/{id}','UserController@find');
     Route::get('sensors/{name}','SensorController@getUserSensors');
