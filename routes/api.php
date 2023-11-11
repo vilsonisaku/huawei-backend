@@ -30,4 +30,3 @@ Route::middleware('auth')->group( function () {
     Route::get('sensors/{name}','SensorController@getUserSensors');
     Route::post('sensors/{name}','SensorController@createUserSensors');
 });
-
