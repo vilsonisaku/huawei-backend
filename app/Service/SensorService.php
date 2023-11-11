@@ -73,7 +73,8 @@ class SensorService
             "last" => $this->userSensorModel($sensor->id,$user->id)->latest("time")->first(["value","time"])
         ];
         foreach($data as $key => $item){
-            $data[$key]->value = json_decode($item->value)[0];
+            if($item)
+                $data[$key]->value = json_decode($item->value)[0];
         }
         return $data;
     }
