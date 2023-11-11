@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateUserSensorRequest;
 use App\Http\Requests\GetUserSensorRequest;
 use App\Models\SensorType;
 use App\Service\SensorService;
@@ -20,7 +21,8 @@ class SensorController extends Controller
         return $this->sensorService->getUserSensors($user,$name,$userSensorRequest->take?:10);
     }
 
-    function updateUserSensors(){
-        // return $this->sensorService->updateUserSensors();
+    function createUserSensors($name,CreateUserSensorRequest $request){
+        $user = auth()->user();
+        return $this->sensorService->updateUserSensors($user,$name,$request->get("data"));
     }
 }

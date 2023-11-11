@@ -25,8 +25,14 @@ class SensorService
         return $this->userSensor->where("type_id",$sensor->id)->where("user_id",$user->id)->with("type")->latest('created_at')->paginate($take);
     }
 
-    function updateUserSensor(string $name){
-        $sensor = $this->sensorType->whereName($name)->first();
+    function updateUserSensors(User $user, string $name,array $data){
+        $sensor = $this->sensorType->whereName($name)->firstOrFail();
+        foreach($data as $key => $valueTime){
+            $data[$key]["type_id"]=$sensor->id;
+            $data[$key]["user_id"]=$user->id;
+            $data[$key]["value"] = json_encode($data[$key]["value"]);
+        }
+        return $this->userSensor->upsert($data,"id");
     }
 
 }
