@@ -34,4 +34,8 @@ class UserController extends Controller
     function checkToken(){
         return $this->userService->checkToken();
     }
+
+    function logout(Request $request){
+        return ["success"=>$request->user()->token()->revoke()];
+    }
 }
